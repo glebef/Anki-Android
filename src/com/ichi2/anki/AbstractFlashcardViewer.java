@@ -1458,7 +1458,7 @@ public abstract class AbstractFlashcardViewer extends NavigationDrawerActivity {
 
 
     private boolean lookUp() {
-        mLookUpIcon.setVisibility(View.GONE);
+        //mLookUpIcon.setVisibility(View.GONE);
         mIsSelecting = false;
         if (Lookup.lookUp(clipboardGetText().toString())) {
             clipboardSetText("");
@@ -1535,7 +1535,7 @@ public abstract class AbstractFlashcardViewer extends NavigationDrawerActivity {
             return;
         }
         mIsSelecting = false;
-        hideLookupButton();
+//        hideLookupButton();
         switch (ease) {
             case EASE_FAILED:
                 mChosenAnswer.setText("\u2022");
@@ -1684,14 +1684,26 @@ public abstract class AbstractFlashcardViewer extends NavigationDrawerActivity {
         }
 
         mLookUpIcon = findViewById(R.id.lookup_button);
-        mLookUpIcon.setVisibility(View.GONE);
+        SharedPreferences preferences = AnkiDroidApp.getSharedPrefs(AnkiDroidApp.getInstance().getBaseContext());
+		if (Integer.parseInt(preferences.getString("dictionary", Integer.toString(0))) != 0 ){
+			mLookUpIcon.setVisibility(View.VISIBLE);
+		} else {
+			mLookUpIcon.setVisibility(View.GONE);
+		}
         mLookUpIcon.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                if (clipboardHasText()) {
-                    lookUp();
-                }
+            	String mystring = Utils.stripHTML(mCurrentCard.qSimple());
+            	if (mystring.indexOf("[") !=-1){
+                	mystring = mystring.substring(0,mystring.indexOf("[")-1);        	
+            	}
+            	if (mystring.indexOf("(") !=-1){
+                	mystring = mystring.substring(0,mystring.indexOf("(")-1);        	
+            	}
+            	clipboardSetText(mystring);
+				lookUp();
+                
             }
 
         });
@@ -3094,7 +3106,7 @@ public abstract class AbstractFlashcardViewer extends NavigationDrawerActivity {
                 }
             }
             mIsSelecting = false;
-            showLookupButtonIfNeeded();
+//            showLookupButtonIfNeeded();
             return false;
         }
     }
